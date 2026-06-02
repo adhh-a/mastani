@@ -1230,7 +1230,7 @@ export default function Home() {
               <button key={l} className="footer-link" onClick={() => scrollTo(["beranda","produk","tentang","kontak","faq"][i])} style={{ background: "none", border: "none", fontFamily: "DM Sans, sans-serif" }}>{l}</button>
             ))}
           </div>
-          <div className="footer-copy">© 2025 MasTani. Hak cipta dilindungi.</div>
+          <div className="footer-copy">© 2025 MasTani. ----</div>
         </div>
       </div>
 
