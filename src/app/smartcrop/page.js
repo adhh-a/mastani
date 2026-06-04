@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 
@@ -61,7 +60,6 @@ const timeline = [
 const products = [
   {
     id: "tani-mentor",
-    route: "/tani-mentor",
     icon: "👨‍🏫",
     name: "TaniMentor",
     tagline: "Konsultasi & Pendampingan Ahli",
@@ -72,7 +70,6 @@ const products = [
   },
   {
     id: "tani-lease",
-    route: "/tani-lease",
     icon: "🗺️",
     name: "TaniLease",
     tagline: "Akses Lahan Mudah & Transparan",
@@ -83,7 +80,6 @@ const products = [
   },
   {
     id: "tani-mart",
-    route: "/tani-mart",
     icon: "🛒",
     name: "TaniMart",
     tagline: "Marketplace Sarana Pertanian",
@@ -94,7 +90,6 @@ const products = [
   },
   {
     id: "smartcrop",
-    route: "/smartcrop",
     icon: "📊",
     name: "SmartCrop Insight",
     tagline: "Analisis Pasar Berbasis Data",
@@ -103,6 +98,13 @@ const products = [
     lightColor: "#E0F0FF",
     features: ["Rekomendasi komoditas AI", "Grafik harga real-time", "Analisis risiko pasar", "Laporan tren mingguan"],
   },
+];
+
+const teamMembers = [
+  { name: "Anisa Rahmawati", role: "Chief Executive Officer", emoji: "👩‍💼", bg: "#D8F3DC" },
+  { name: "Budi Santoso", role: "Chief Technology Officer", emoji: "👨‍💻", bg: "#E0F0FF" },
+  { name: "Citra Dewi", role: "Chief Marketing Officer", emoji: "👩‍🎨", bg: "#FFE5EC" },
+  { name: "Dimas Prayoga", role: "Partnership & Community Manager", emoji: "🤝", bg: "#FFF0EB" },
 ];
 
 const milestones = [
@@ -114,12 +116,30 @@ const milestones = [
 ];
 
 const faqs = [
-  { q: "Apakah MasTani gratis untuk digunakan?", a: "MasTani menggunakan model freemium. Fitur dasar seperti browsing konten edukasi, melihat daftar lahan, dan menelusuri TaniMart dapat diakses gratis. Fitur premium seperti konsultasi lanjutan dengan mentor dan insight pasar eksklusif tersedia melalui paket berlangganan mulai Rp99.000/bulan." },
-  { q: "Bagaimana cara saya memulai bertani dengan MasTani?", a: "Cukup daftarkan diri kamu di aplikasi atau website MasTani. Setelah registrasi, kamu bisa langsung mengakses modul edukasi, mencari mentor, menelusuri lahan tersedia, atau melihat analisis komoditas terbaru — semua dari satu akun." },
-  { q: "Siapa saja mentor yang ada di TaniMentor?", a: "Mentor kami terdiri dari akademisi pertanian, praktisi agribisnis berpengalaman, dan penyuluh pertanian bersertifikat. Semua mentor melalui proses verifikasi ketat sebelum bergabung di platform untuk memastikan kualitas pendampingan yang kamu terima." },
-  { q: "Apakah TaniLease aman untuk menyewa lahan?", a: "Ya. TaniLease menggunakan sistem kontrak digital yang terdokumentasi, verifikasi kepemilikan lahan, dan sistem escrow pembayaran untuk memastikan transaksi sewa berlangsung transparan dan aman bagi kedua belah pihak." },
-  { q: "Apakah SmartCrop Insight akurat?", a: "SmartCrop Insight menggunakan data harga pasar aktual dari berbagai sumber terpercaya dan diperbarui secara berkala. Fitur ini dirancang sebagai alat bantu pengambilan keputusan, bukan jaminan hasil panen — sehingga kami selalu menyertakan konteks dan catatan risiko pada setiap rekomendasi." },
-  { q: "Di mana saja MasTani tersedia?", a: "Saat ini MasTani fokus melayani pengguna di Pulau Jawa sebagai tahap awal. Dalam roadmap kami, ekspansi ke seluruh Indonesia dijadwalkan seiring pertumbuhan tim dan jaringan kemitraan." },
+  {
+    q: "Apakah MasTani gratis untuk digunakan?",
+    a: "MasTani menggunakan model freemium. Fitur dasar seperti browsing konten edukasi, melihat daftar lahan, dan menelusuri TaniMart dapat diakses gratis. Fitur premium seperti konsultasi lanjutan dengan mentor dan insight pasar eksklusif tersedia melalui paket berlangganan mulai Rp99.000/bulan.",
+  },
+  {
+    q: "Bagaimana cara saya memulai bertani dengan MasTani?",
+    a: "Cukup daftarkan diri kamu di aplikasi atau website MasTani. Setelah registrasi, kamu bisa langsung mengakses modul edukasi, mencari mentor, menelusuri lahan tersedia, atau melihat analisis komoditas terbaru — semua dari satu akun.",
+  },
+  {
+    q: "Siapa saja mentor yang ada di TaniMentor?",
+    a: "Mentor kami terdiri dari akademisi pertanian, praktisi agribisnis berpengalaman, dan penyuluh pertanian bersertifikat. Semua mentor melalui proses verifikasi ketat sebelum bergabung di platform untuk memastikan kualitas pendampingan yang kamu terima.",
+  },
+  {
+    q: "Apakah TaniLease aman untuk menyewa lahan?",
+    a: "Ya. TaniLease menggunakan sistem kontrak digital yang terdokumentasi, verifikasi kepemilikan lahan, dan sistem escrow pembayaran untuk memastikan transaksi sewa berlangsung transparan dan aman bagi kedua belah pihak.",
+  },
+  {
+    q: "Apakah SmartCrop Insight akurat?",
+    a: "SmartCrop Insight menggunakan data harga pasar aktual dari berbagai sumber terpercaya dan diperbarui secara berkala. Fitur ini dirancang sebagai alat bantu pengambilan keputusan, bukan jaminan hasil panen — sehingga kami selalu menyertakan konteks dan catatan risiko pada setiap rekomendasi.",
+  },
+  {
+    q: "Di mana saja MasTani tersedia?",
+    a: "Saat ini MasTani fokus melayani pengguna di Pulau Jawa sebagai tahap awal. Dalam roadmap kami, ekspansi ke seluruh Indonesia dijadwalkan seiring pertumbuhan tim dan jaringan kemitraan.",
+  },
 ];
 
 const navLinks = [
@@ -147,7 +167,11 @@ function BarChart({ data }) {
         <div key={d.label} className="bar-group">
           <div className="bars">
             {(["selada", "tomat", "cabai"]).map((key) => (
-              <div key={key} className={`bar bar-${key}`} style={{ height: `${d[key]}%` }} />
+              <div
+                key={key}
+                className={`bar bar-${key}`}
+                style={{ height: `${d[key]}%` }}
+              />
             ))}
           </div>
           <span className="bar-label">{d.label}</span>
@@ -175,13 +199,14 @@ function FaqItem({ q, a }) {
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 
 export default function Home() {
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState("Minggu");
   const [activeSection, setActiveSection] = useState("beranda");
   const [activeProd, setActiveProd] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setMenuOpen(false);
   };
 
   useEffect(() => {
@@ -241,7 +266,13 @@ export default function Home() {
           display: flex; align-items: center; justify-content: space-between;
           height: 68px;
         }
-        .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; background: none; border: none; cursor: pointer; }
+        .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .nav-logo-mark {
+          width: 38px; height: 38px; background: var(--forest);
+          border-radius: 10px; display: flex; align-items: center; justify-content: center;
+          font-size: 18px;
+        }
+        .nav-logo-text { font-family: 'Fraunces', serif; font-weight: 700; font-size: 20px; color: var(--forest); }
         .nav-links { display: flex; align-items: center; gap: 4px; }
         .nav-link {
           padding: 8px 16px; border-radius: 100px; font-size: 14px; font-weight: 500;
@@ -268,6 +299,8 @@ export default function Home() {
           align-items: center; justify-content: space-between;
         }
         @media (max-width: 768px) { .mobile-header { display: flex; } }
+        .mobile-logo { font-family: 'Fraunces', serif; font-weight: 700; font-size: 18px; color: var(--forest); }
+        .mobile-header-right { display: flex; align-items: center; gap: 8px; }
         .icon-btn {
           width: 36px; height: 36px; border-radius: 50%; border: none;
           background: var(--parchment); cursor: pointer; display: flex; align-items: center; justify-content: center;
@@ -299,6 +332,10 @@ export default function Home() {
           font-weight: 700; line-height: 1.15; color: var(--forest);
         }
         .section-sub { color: var(--muted); font-size: 15px; margin-top: 8px; max-width: 540px; line-height: 1.7; }
+
+        /* ═══════════════════════════════════════════
+           BERANDA SECTION
+        ═══════════════════════════════════════════ */
 
         /* Hero */
         .hero {
@@ -376,7 +413,9 @@ export default function Home() {
         .menu-desc-sm { font-size: 10px; color: var(--muted); }
 
         /* Market section */
-        .market-card { background: white; border: 1px solid var(--sand); border-radius: var(--radius); padding: 24px; }
+        .market-card {
+          background: white; border: 1px solid var(--sand); border-radius: var(--radius); padding: 24px;
+        }
         .market-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
         .live-badge {
           display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600;
@@ -384,7 +423,8 @@ export default function Home() {
         }
         .live-dot { width: 6px; height: 6px; background: var(--mint); border-radius: 50%; animation: pulse 2s infinite; }
         .tab-row {
-          display: flex; gap: 4px; background: var(--parchment); padding: 4px; border-radius: 12px; margin-bottom: 14px;
+          display: flex; gap: 4px; background: var(--parchment); padding: 4px; border-radius: 12px;
+          margin-bottom: 14px;
         }
         .tab-btn {
           flex: 1; padding: 7px; border: none; border-radius: 8px; font-size: 12px; font-weight: 600;
@@ -416,12 +456,16 @@ export default function Home() {
         .commodity-emoji { font-size: 22px; }
         .commodity-name { font-size: 13px; font-weight: 600; color: var(--ink); }
         .commodity-price { font-size: 11px; color: var(--muted); margin-top: 1px; }
-        .change-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 100px; }
+        .change-badge {
+          font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 100px;
+        }
         .change-up { background: rgba(82,183,136,0.12); color: #1B4332; }
         .change-down { background: rgba(224,92,92,0.1); color: #C0392B; }
 
         /* Hot picks */
-        .hot-card { background: var(--parchment); border: 1px solid var(--sand); border-radius: 16px; padding: 16px; margin-top: 16px; }
+        .hot-card {
+          background: var(--parchment); border: 1px solid var(--sand); border-radius: 16px; padding: 16px; margin-top: 16px;
+        }
         .hot-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 12px; }
         .potential-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
         .potential-bar-bg { flex: 1; height: 5px; background: rgba(0,0,0,0.06); border-radius: 100px; overflow: hidden; }
@@ -450,7 +494,9 @@ export default function Home() {
         .pemula-cta-btn:hover { background: rgba(255,255,255,0.28); }
 
         /* Ecosystem */
-        .eco-card { background: white; border: 1px solid var(--sand); border-radius: var(--radius); padding: 24px; }
+        .eco-card {
+          background: white; border: 1px solid var(--sand); border-radius: var(--radius); padding: 24px;
+        }
         .eco-timeline { position: relative; padding-left: 8px; }
         .eco-line {
           position: absolute; left: 27px; top: 24px; bottom: 24px;
@@ -470,15 +516,37 @@ export default function Home() {
         .eco-step-title { font-size: 13px; font-weight: 700; color: var(--ink); }
         .eco-step-desc { font-size: 11px; color: var(--muted); }
 
-        /* ── PRODUK SECTION ── */
-        .produk-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 24px 0 0; }
+        /* Promo banner */
+        .promo-banner {
+          background: var(--forest); border-radius: var(--radius);
+          padding: 24px; display: flex; align-items: center; gap: 16px;
+        }
+        .promo-icon { font-size: 36px; flex-shrink: 0; }
+        .promo-text { flex: 1; }
+        .promo-title { font-size: 14px; font-weight: 700; color: white; }
+        .promo-sub { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+        .promo-btn {
+          background: white; color: var(--forest); border: none; border-radius: 100px;
+          padding: 9px 18px; font-size: 12px; font-weight: 700; cursor: pointer;
+          flex-shrink: 0; font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+        }
+        .promo-btn:hover { background: #95D5B2; }
+
+        /* ═══════════════════════════════════════════
+           PRODUK SECTION
+        ═══════════════════════════════════════════ */
+        .produk-tabs {
+          display: flex; gap: 8px; flex-wrap: wrap; margin: 24px 0 0;
+        }
         .produk-tab {
           padding: 9px 18px; border-radius: 100px; font-size: 13px; font-weight: 600;
           border: 1.5px solid var(--sand); background: white; cursor: pointer;
           transition: all 0.2s; color: var(--muted);
         }
         .produk-tab.active { border-color: var(--sage); background: var(--sage); color: white; }
-        .produk-detail { display: grid; gap: 24px; margin-top: 24px; }
+        .produk-detail {
+          display: grid; gap: 24px; margin-top: 24px;
+        }
         @media (min-width: 769px) { .produk-detail { grid-template-columns: 1fr 1fr; } }
         .produk-visual {
           border-radius: var(--radius); min-height: 280px;
@@ -495,7 +563,10 @@ export default function Home() {
         .produk-tagline { font-size: 14px; font-weight: 600; color: var(--sage); }
         .produk-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
         .produk-features { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
-        .produk-feature { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink); font-weight: 500; }
+        .produk-feature {
+          display: flex; align-items: center; gap: 8px;
+          font-size: 13px; color: var(--ink); font-weight: 500;
+        }
         .feature-check {
           width: 20px; height: 20px; border-radius: 50%; background: rgba(82,183,136,0.15);
           display: flex; align-items: center; justify-content: center;
@@ -509,10 +580,33 @@ export default function Home() {
         }
         .produk-cta:hover { background: var(--sage); transform: translateY(-1px); }
 
-        /* ── TENTANG KAMI ── */
+        /* Compare table */
+        .compare-table-wrap { overflow-x: auto; margin-top: 40px; }
+        .compare-table { width: 100%; border-collapse: collapse; min-width: 520px; }
+        .compare-table th {
+          padding: 12px 16px; text-align: center; font-size: 12px; font-weight: 700; color: var(--muted);
+          border-bottom: 2px solid var(--sand); text-transform: uppercase; letter-spacing: 0.06em;
+        }
+        .compare-table th:first-child { text-align: left; }
+        .compare-table th.highlight { color: var(--sage); }
+        .compare-table td {
+          padding: 12px 16px; font-size: 13px; border-bottom: 1px solid var(--parchment);
+          text-align: center;
+        }
+        .compare-table td:first-child { text-align: left; font-weight: 600; color: var(--ink); }
+        .compare-table tr:hover td { background: var(--cream); }
+        .check-green { color: var(--sage); font-weight: 700; font-size: 16px; }
+        .check-red { color: #C0392B; font-size: 16px; }
+        .check-partial { color: #A87000; font-size: 12px; font-weight: 600; }
+
+        /* ═══════════════════════════════════════════
+           TENTANG KAMI SECTION
+        ═══════════════════════════════════════════ */
         .about-grid { display: grid; gap: 24px; margin-top: 32px; }
         @media (min-width: 769px) { .about-grid { grid-template-columns: 1fr 1fr; } }
-        .about-card { background: white; border: 1px solid var(--sand); border-radius: var(--radius); padding: 28px; }
+        .about-card {
+          background: white; border: 1px solid var(--sand); border-radius: var(--radius); padding: 28px;
+        }
         .about-card-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; color: var(--forest); margin-bottom: 10px; }
         .about-card-text { font-size: 14px; color: var(--muted); line-height: 1.75; }
         .mission-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
@@ -543,14 +637,31 @@ export default function Home() {
         .milestone-label { font-size: 13px; font-weight: 700; color: var(--forest); }
         .milestone-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
 
+        /* Team */
+        .team-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin-top: 28px; }
+        @media (min-width: 769px) { .team-grid { grid-template-columns: repeat(4,1fr); } }
+        .team-card {
+          background: white; border: 1px solid var(--sand); border-radius: var(--radius);
+          padding: 24px 16px; text-align: center; transition: all 0.25s;
+        }
+        .team-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(27,67,50,0.09); }
+        .team-avatar { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 12px; }
+        .team-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+        .team-role { font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+
         /* Stats strip */
         .stats-strip { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-top: 32px; }
         @media (min-width: 769px) { .stats-strip { grid-template-columns: repeat(4,1fr); } }
-        .stat-box { background: white; border: 1px solid var(--sand); border-radius: var(--radius); padding: 20px; text-align: center; }
+        .stat-box {
+          background: white; border: 1px solid var(--sand); border-radius: var(--radius);
+          padding: 20px; text-align: center;
+        }
         .stat-box-num { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; color: var(--forest); }
         .stat-box-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
 
-        /* ── KONTAK ── */
+        /* ═══════════════════════════════════════════
+           KONTAK SECTION
+        ═══════════════════════════════════════════ */
         .kontak-grid { display: grid; gap: 24px; margin-top: 32px; }
         @media (min-width: 769px) { .kontak-grid { grid-template-columns: 1fr 1fr; } }
         .kontak-info { display: flex; flex-direction: column; gap: 12px; }
@@ -561,13 +672,16 @@ export default function Home() {
         .kontak-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--parchment); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
         .kontak-item-title { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; }
         .kontak-item-val { font-size: 14px; font-weight: 600; color: var(--ink); margin-top: 2px; }
-        .kontak-form-card { background: white; border: 1px solid var(--sand); border-radius: var(--radius); padding: 28px; }
+        .kontak-form-card {
+          background: white; border: 1px solid var(--sand); border-radius: var(--radius); padding: 28px;
+        }
         .form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
         .form-label { font-size: 12px; font-weight: 600; color: var(--ink); }
         .form-input, .form-textarea {
           border: 1.5px solid var(--sand); border-radius: 10px; padding: 11px 14px;
           font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink);
-          background: var(--cream); outline: none; transition: border-color 0.2s; resize: none;
+          background: var(--cream); outline: none; transition: border-color 0.2s;
+          resize: none;
         }
         .form-input:focus, .form-textarea:focus { border-color: var(--mint); background: white; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -578,7 +692,9 @@ export default function Home() {
         }
         .submit-btn:hover { background: var(--sage); }
 
-        /* ── FAQ ── */
+        /* ═══════════════════════════════════════════
+           FAQ SECTION
+        ═══════════════════════════════════════════ */
         .faq-list { display: flex; flex-direction: column; gap: 10px; margin-top: 28px; }
         .faq-item {
           background: white; border: 1.5px solid var(--sand); border-radius: 14px;
@@ -595,9 +711,10 @@ export default function Home() {
           background: var(--forest); border-radius: var(--radius); padding: 40px;
           text-align: center; margin-top: 48px;
         }
+        .footer-logo { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; color: white; margin-bottom: 6px; }
         .footer-tagline { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 24px; }
         .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; }
-        .footer-link { font-size: 13px; color: rgba(255,255,255,0.6); cursor: pointer; transition: color 0.2s; text-decoration: none; background: none; border: none; font-family: 'DM Sans', sans-serif; }
+        .footer-link { font-size: 13px; color: rgba(255,255,255,0.6); cursor: pointer; transition: color 0.2s; text-decoration: none; }
         .footer-link:hover { color: white; }
         .footer-copy { font-size: 11px; color: rgba(255,255,255,0.25); }
 
@@ -605,7 +722,8 @@ export default function Home() {
         .mobile-bottom-nav {
           position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
           background: rgba(248,244,238,0.97); backdrop-filter: blur(16px);
-          border-top: 1px solid var(--sand); display: flex;
+          border-top: 1px solid var(--sand);
+          display: flex;
         }
         @media (min-width: 769px) { .mobile-bottom-nav { display: none; } }
         .mobile-nav-btn {
@@ -616,16 +734,47 @@ export default function Home() {
         .mobile-nav-icon { font-size: 20px; }
         .mobile-nav-label { font-size: 9px; font-weight: 600; color: var(--muted); }
         .mobile-nav-btn.active .mobile-nav-label { color: var(--forest); }
+        .mobile-nav-btn.active .mobile-nav-icon { filter: saturate(1.5); }
         .mobile-nav-pip { width: 4px; height: 4px; background: var(--mint); border-radius: 50%; }
 
+        /* Helpers */
+        .divider { height: 1px; background: var(--sand); margin: 32px 0; }
+        .section-header { margin-bottom: 8px; }
+        .grid-2 { display: grid; gap: 20px; }
+        @media (min-width: 769px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+        .space-y > * + * { margin-top: 12px; }
         .hero-logo {
-          position: absolute; top: 50%; right: 60px; transform: translateY(-50%);
-          width: 500px; max-width: 35%;
-          display: flex; align-items: center; justify-content: center; z-index: 2;
+          position: absolute;
+          top: 50%;
+          right: 60px;
+          transform: translateY(-50%);
+
+          width: 500px;
+          max-width: 35%;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          z-index: 2;
         }
-        .hero-logo img { filter: drop-shadow(0 12px 40px rgba(0,0,0,0.25)); }
+
+        .hero-logo img {
+          filter: drop-shadow(0 12px 40px rgba(0,0,0,0.25));
+        }
+
         @media (max-width: 768px) {
-          .hero-logo { position: relative; top: auto; right: auto; transform: none; width: 220px; max-width: 70%; margin: 24px auto 0; }
+          .hero-logo {
+            position: relative;
+            top: auto;
+            right: auto;
+            transform: none;
+
+            width: 220px;
+            max-width: 70%;
+
+            margin: 24px auto 0;
+          }
         }
       `}</style>
 
@@ -633,7 +782,19 @@ export default function Home() {
       <nav className="desktop-nav">
         <div className="desktop-nav-inner">
           <button className="nav-logo" onClick={() => scrollTo("beranda")}>
-            <Image src="/logo-mastani.png" alt="MasTani" width={220} height={80} priority style={{ height: 72, width: "auto", objectFit: "contain" }} />
+            <Image
+              src="/logo-mastani.png"
+              alt="MasTani"
+              width={220}
+              height={80}
+              priority
+              className="nav-logo-img"
+              style={{
+                height: 72,
+                width: "auto",
+                objectFit: "contain"
+              }}
+            />
           </button>
           <div className="nav-links">
             {navLinks.map((l) => (
@@ -642,7 +803,7 @@ export default function Home() {
               </button>
             ))}
           </div>
-          <button className="nav-cta">Mulai Bertani 🌱</button>
+          <button className="nav-cta">Mulai Bertani </button>
         </div>
       </nav>
 
@@ -651,7 +812,7 @@ export default function Home() {
         <button className="nav-logo" onClick={() => scrollTo("beranda")} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center" }}>
           <Image src="/logo-mastani.png" alt="MasTani" width={110} height={40} priority style={{ height: 36, width: "auto", objectFit: "contain" }} />
         </button>
-        <div className="mobile-header-right" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div className="mobile-header-right">
           <button className="icon-btn">🔔<span className="notif-dot" /></button>
           <button className="avatar-btn">A</button>
         </div>
@@ -659,7 +820,9 @@ export default function Home() {
 
       <div className="page">
 
-        {/* ═══ BERANDA ═══ */}
+        {/* ═══════════════════════════════════════════
+            BERANDA
+        ═══════════════════════════════════════════ */}
         <section id="beranda">
 
           {/* Hero */}
@@ -668,7 +831,18 @@ export default function Home() {
             <div className="hero-bg-circle" style={{ width: 320, height: 320, top: -80, right: -80 }} />
             <div className="hero-bg-circle" style={{ width: 180, height: 180, bottom: 40, right: 120 }} />
             <div className="hero-logo">
-              <Image src="/loggoo.png" alt="MasTani" width={420} height={420} priority style={{ width: "100%", height: "auto", objectFit: "contain" }} />
+              <Image
+                src="/loggoo.png"
+                alt="MasTani"
+                width={420}
+                height={420}
+                priority
+                style={{
+                  width: "100%",
+                  height: "auto",
+                  objectFit: "contain"
+                }}
+              />
             </div>
             <div className="hero-badge">
               <span className="hero-badge-dot" />
@@ -702,56 +876,12 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Pemula */}
-          <div style={{ marginTop: 24 }}>
-            <p className="section-label">Untuk Pemula</p>
-            {[
-              { icon: "🌱", q: "Belum tahu mulai dari mana?", a: "Pelajari dasar pertanian dari nol bersama mentor kami.", cta: "Mulai Belajar", bg: "linear-gradient(135deg,#2D6A4F,#1B4332)", route: "/tani-mentor" },
-              { icon: "🚜", q: "Tidak punya lahan?", a: "Temukan lahan sewa terdekat yang siap digunakan hari ini.", cta: "Cari Lahan", bg: "linear-gradient(135deg,#E9A84C,#C0720A)", route: "/tani-lease" },
-              { icon: "💰", q: "Takut gagal pasar?", a: "Gunakan analisis pasar berbasis data sebelum memulai.", cta: "Lihat Analisis", bg: "linear-gradient(135deg,#457B9D,#1D3557)", route: "/smartcrop" },
-            ].map((item) => (
-              <div key={item.q} className="pemula-card" style={{ background: item.bg }}>
-                <div className="pemula-icon-wrap">{item.icon}</div>
-                <div className="pemula-text">
-                  <div className="pemula-q">{item.q}</div>
-                  <div className="pemula-a">{item.a}</div>
-                </div>
-                <button className="pemula-cta-btn" onClick={() => router.push(item.route)}>{item.cta}</button>
-              </div>
-            ))}
-          </div>
-
-          {/* Ecosystem */}
-          <div style={{ marginTop: 24 }}>
-            <div className="eco-card">
-              <p style={{ fontFamily: "'DM Sans'", fontWeight: 700, fontSize: 15, color: "var(--ink)" }}>Ekosistem Hulu–Hilir</p>
-              <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 3, marginBottom: 20 }}>Dari belajar hingga panen & jual — semua dalam satu platform.</p>
-              <div className="eco-timeline">
-                <div className="eco-line" />
-                {timeline.map((s, i) => (
-                  <div key={s.label} className="eco-step">
-                    <div className="eco-step-icon" style={{ background: `hsl(${130 + i*8},${58-i*3}%,${90-i*5}%)` }}>{s.icon}</div>
-                    <div className="eco-step-body">
-                      <div className="eco-step-title">{s.label}</div>
-                      <div className="eco-step-desc">{s.desc}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══ PRODUK (sekarang SETELAH Analisis Pasar) ═══ */}
-        <section id="produk">
-          {/* ── Analisis Pasar (dipindah ke sini, sebelum detail produk) ── */}
-          <div style={{ marginBottom: 40 }}>
-            <p className="section-label">Analisis Pasar</p>
-            <h2 className="section-title" style={{ marginBottom: 20 }}>Data Pasar<br />Real-time</h2>
+          {/* Market Analysis */}
+          <div style={{ marginTop: 20 }}>
             <div className="market-card">
               <div className="market-header">
                 <div>
-                  <p style={{ fontFamily: "'DM Sans'", fontWeight: 700, fontSize: 15, color: "var(--ink)" }}>Tren Harga Komoditas</p>
+                  <p style={{ fontFamily: "'DM Sans'", fontWeight: 700, fontSize: 15, color: "var(--ink)" }}>Analisis Pasar</p>
                   <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 2 }}>Data aktual untuk keputusan tani terbaik</p>
                 </div>
                 <span className="live-badge"><span className="live-dot" />Live</span>
@@ -802,7 +932,62 @@ export default function Home() {
             </div>
           </div>
 
-          {/* ── Produk & Layanan ── */}
+          {/* Pemula */}
+          <div style={{ marginTop: 24 }}>
+            <p className="section-label">Untuk Pemula</p>
+            {[
+              { icon: "🌱", q: "Belum tahu mulai dari mana?", a: "Pelajari dasar pertanian dari nol bersama mentor kami.", cta: "Mulai Belajar", bg: "linear-gradient(135deg,#2D6A4F,#1B4332)" },
+              { icon: "🚜", q: "Tidak punya lahan?", a: "Temukan lahan sewa terdekat yang siap digunakan hari ini.", cta: "Cari Lahan", bg: "linear-gradient(135deg,#E9A84C,#C0720A)" },
+              { icon: "💰", q: "Takut gagal pasar?", a: "Gunakan analisis pasar berbasis data sebelum memulai.", cta: "Lihat Analisis", bg: "linear-gradient(135deg,#457B9D,#1D3557)" },
+            ].map((item) => (
+              <div key={item.q} className="pemula-card" style={{ background: item.bg }}>
+                <div className="pemula-icon-wrap">{item.icon}</div>
+                <div className="pemula-text">
+                  <div className="pemula-q">{item.q}</div>
+                  <div className="pemula-a">{item.a}</div>
+                </div>
+                <button className="pemula-cta-btn">{item.cta}</button>
+              </div>
+            ))}
+          </div>
+
+          {/* Ecosystem */}
+          <div style={{ marginTop: 24 }}>
+            <div className="eco-card">
+              <p style={{ fontFamily: "'DM Sans'", fontWeight: 700, fontSize: 15, color: "var(--ink)" }}>Ekosistem Hulu–Hilir</p>
+              <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 3, marginBottom: 20 }}>Dari belajar hingga panen & jual — semua dalam satu platform.</p>
+              <div className="eco-timeline">
+                <div className="eco-line" />
+                {timeline.map((s, i) => (
+                  <div key={s.label} className="eco-step">
+                    <div className="eco-step-icon" style={{ background: `hsl(${130 + i*8},${58-i*3}%,${90-i*5}%)` }}>{s.icon}</div>
+                    <div className="eco-step-body">
+                      <div className="eco-step-title">{s.label}</div>
+                      <div className="eco-step-desc">{s.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Promo 
+          <div style={{ marginTop: 20 }}>
+            <div className="promo-banner">
+              <div className="promo-icon">🎓</div>
+              <div className="promo-text">
+                <div className="promo-title">Kelas Gratis Minggu Ini</div>
+                <div className="promo-sub">Budidaya Selada Hidroponik — Sabtu, 14.00 WIB</div>
+              </div>
+              <button className="promo-btn">Daftar →</button>
+            </div>
+          </div>*/}
+        </section>
+
+        {/* ═══════════════════════════════════════════
+            PRODUK
+        ═══════════════════════════════════════════ */}
+        <section id="produk">
           <div className="section-header">
             <p className="section-label">Produk & Layanan</p>
             <h2 className="section-title">Semua yang Kamu<br />Butuhkan, di Satu Tempat</h2>
@@ -837,20 +1022,61 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <button className="produk-cta" onClick={() => router.push(p.route)}>
-                  Coba {p.name} →
-                </button>
+                <button className="produk-cta">Coba {p.name} →</button>
               </div>
             </div>
           ))}
+
+          {/* Comparison Table */}
+          <div style={{ marginTop: 40 }}>
+            <p className="section-label">Perbandingan</p>
+            <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 24, color: "var(--forest)", marginBottom: 16 }}>MasTani vs Kompetitor</h3>
+            <div className="compare-table-wrap">
+              <table className="compare-table">
+                <thead>
+                  <tr>
+                    <th style={{ textAlign: "left" }}>Fitur</th>
+                    <th className="highlight">MasTani</th>
+                    <th>TaniHub</th>
+                    <th>Pak Tani Digital</th>
+                    <th>Penyuluhan Konvensional</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    ["Edukasi & Mentoring", "✅","❌","Terbatas","✅"],
+                    ["Akses Lahan", "✅","❌","❌","❌"],
+                    ["Marketplace Sarana Tani", "✅","❌","✅","❌"],
+                    ["Analisis Pasar", "✅","✅","Terbatas","❌"],
+                    ["Fokus Petani Pemula", "✅","❌","❌","❌"],
+                    ["Ekosistem Hulu–Hilir", "✅","Sebagian","Sebagian","❌"],
+                  ].map(([feat, ...vals]) => (
+                    <tr key={feat}>
+                      <td>{feat}</td>
+                      {vals.map((v, idx) => (
+                        <td key={idx}>
+                          {v === "✅" ? <span className="check-green">✓</span>
+                           : v === "❌" ? <span className="check-red">✗</span>
+                           : <span className="check-partial">{v}</span>}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </section>
 
-        {/* ═══ TENTANG KAMI ═══ */}
+        {/* ═══════════════════════════════════════════
+            TENTANG KAMI
+        ═══════════════════════════════════════════ */}
         <section id="tentang">
           <p className="section-label">Tentang Kami</p>
           <h2 className="section-title">Misi Kami: Regenerasi<br />Petani Indonesia</h2>
           <p className="section-sub">MasTani lahir dari keprihatinan terhadap krisis regenerasi petani dan semangat untuk memberdayakan generasi muda lewat teknologi digital.</p>
 
+          {/* Stats */}
           <div className="stats-strip">
             {[["27 Juta+","Total petani Indonesia"],["72.77%","Petani usia > 45 tahun"],["100.000","Target petani muda 2032"],["4 Layanan","Terintegrasi dalam 1 platform"]].map(([n,d]) => (
               <div key={n} className="stat-box">
@@ -860,6 +1086,7 @@ export default function Home() {
             ))}
           </div>
 
+          {/* Visi & Misi */}
           <div className="about-grid">
             <div className="about-card">
               <div className="about-card-title">Visi</div>
@@ -884,6 +1111,7 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Timeline */}
           <div style={{ marginTop: 40 }}>
             <p className="section-label">Perjalanan Kami</p>
             <div className="milestone-track">
@@ -898,9 +1126,25 @@ export default function Home() {
               ))}
             </div>
           </div>
+
+          {/* Team 
+          <div style={{ marginTop: 40 }}>
+            <p className="section-label">Tim Kami</p>
+            <div className="team-grid">
+              {teamMembers.map((t) => (
+                <div key={t.name} className="team-card">
+                  <div className="team-avatar" style={{ background: t.bg }}>{t.emoji}</div>
+                  <div className="team-name">{t.name}</div>
+                  <div className="team-role">{t.role}</div>
+                </div>
+              ))}
+            </div>
+          </div>*/}
         </section>
 
-        {/* ═══ KONTAK ═══ */}
+        {/* ═══════════════════════════════════════════
+            KONTAK
+        ═══════════════════════════════════════════ */}
         <section id="kontak">
           <p className="section-label">Hubungi Kami</p>
           <h2 className="section-title">Mari Berkolaborasi<br />Bersama MasTani</h2>
@@ -922,6 +1166,7 @@ export default function Home() {
                   </div>
                 </div>
               ))}
+
               <div style={{ background: "var(--forest)", borderRadius: 16, padding: 20 }}>
                 <p style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: "white", fontWeight: 700, marginBottom: 6 }}>Ikuti Media Sosial Kami</p>
                 <p style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", marginBottom: 14 }}>Update terbaru, tips bertani, dan konten edukasi gratis.</p>
@@ -958,14 +1203,18 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ═══ FAQ ═══ */}
+        {/* ═══════════════════════════════════════════
+            FAQ
+        ═══════════════════════════════════════════ */}
         <section id="faq">
           <p className="section-label">FAQ</p>
           <h2 className="section-title">Pertanyaan yang<br />Sering Ditanyakan</h2>
           <p className="section-sub">Belum menemukan jawaban? Hubungi kami langsung di halaman Kontak.</p>
+
           <div className="faq-list">
             {faqs.map((f) => <FaqItem key={f.q} q={f.q} a={f.a} />)}
           </div>
+
           <div style={{ background: "var(--parchment)", borderRadius: 20, padding: 32, textAlign: "center", marginTop: 32, border: "1px solid var(--sand)" }}>
             <p style={{ fontFamily: "Fraunces, serif", fontSize: 22, fontWeight: 700, color: "var(--forest)" }}>Masih ada pertanyaan?</p>
             <p style={{ fontSize: 14, color: "var(--muted)", margin: "8px 0 20px" }}>Tim kami siap membantu kamu setiap hari kerja.</p>
@@ -978,10 +1227,10 @@ export default function Home() {
           <div className="footer-tagline">Platform digital yang menumbuhkan petani Indonesia.</div>
           <div className="footer-links">
             {["Beranda","Produk","Tentang","Kontak","FAQ"].map((l, i) => (
-              <button key={l} className="footer-link" onClick={() => scrollTo(["beranda","produk","tentang","kontak","faq"][i])}>{l}</button>
+              <button key={l} className="footer-link" onClick={() => scrollTo(["beranda","produk","tentang","kontak","faq"][i])} style={{ background: "none", border: "none", fontFamily: "DM Sans, sans-serif" }}>{l}</button>
             ))}
           </div>
-          <div className="footer-copy">© 2026 MasTani.</div>
+          <div className="footer-copy">© 2026 MasTani. ~~~~~~~~~ </div>
         </div>
       </div>
 
