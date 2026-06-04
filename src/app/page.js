@@ -681,7 +681,6 @@ export default function Home() {
               <button className="btn-ghost" onClick={() => scrollTo("tentang")}>Tentang Kami</button>
             </div>
           </div>
-
           {/* Menu */}
           <div style={{ marginTop: 24 }}>
             <p className="section-label">Layanan Utama</p>
@@ -701,8 +700,54 @@ export default function Home() {
               ))}
             </div>
           </div>
+        </section>
+
+          {/* ── Produk & Layanan ── */}
+        <section id="produk">
+          <div className="section-header">
+            <p className="section-label">Produk & Layanan</p>
+            <h2 className="section-title">Semua yang Kamu<br />Butuhkan, di Satu Tempat</h2>
+            <p className="section-sub">MasTani menghadirkan empat layanan terintegrasi yang dirancang khusus untuk mendukung perjalanan bertani dari nol hingga sukses.</p>
+          </div>
+
+          <div className="produk-tabs">
+            {products.map((p, i) => (
+              <button key={p.id} className={`produk-tab ${activeProd === i ? "active" : ""}`} onClick={() => setActiveProd(i)}>
+                {p.icon} {p.name}
+              </button>
+            ))}
+          </div>
+
+          {products.map((p, i) => i === activeProd && (
+            <div key={p.id} className="produk-detail">
+              <div className="produk-visual" style={{ background: p.lightColor }}>
+                <div style={{ fontSize: 90 }}>{p.icon}</div>
+                <div style={{ position: "absolute", top: 16, left: 16, background: "white", borderRadius: 100, padding: "4px 12px", fontSize: 11, fontWeight: 700, color: p.color }}>
+                  {p.name}
+                </div>
+              </div>
+              <div className="produk-info">
+                <span className="produk-tag" style={{ background: p.lightColor, color: p.color }}>{p.tagline}</span>
+                <h3 className="produk-name">{p.name}</h3>
+                <p className="produk-desc">{p.desc}</p>
+                <ul className="produk-features">
+                  {p.features.map((f) => (
+                    <li key={f} className="produk-feature">
+                      <span className="feature-check">✓</span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <button className="produk-cta" onClick={() => router.push(p.route)}>
+                  Coba {p.name} →
+                </button>
+              </div>
+            </div>
+          ))}
+        </section>
 
           {/* Pemula */}
+        <section>
           <div style={{ marginTop: 24 }}>
             <p className="section-label">Untuk Pemula</p>
             {[
@@ -743,7 +788,7 @@ export default function Home() {
         </section>
 
         {/* ═══ PRODUK (sekarang SETELAH Analisis Pasar) ═══ */}
-        <section id="produk">
+        <section>
           {/* ── Analisis Pasar (dipindah ke sini, sebelum detail produk) ── */}
           <div style={{ marginBottom: 40 }}>
             <p className="section-label">Analisis Pasar</p>
@@ -801,49 +846,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-
-          {/* ── Produk & Layanan ── */}
-          <div className="section-header">
-            <p className="section-label">Produk & Layanan</p>
-            <h2 className="section-title">Semua yang Kamu<br />Butuhkan, di Satu Tempat</h2>
-            <p className="section-sub">MasTani menghadirkan empat layanan terintegrasi yang dirancang khusus untuk mendukung perjalanan bertani dari nol hingga sukses.</p>
-          </div>
-
-          <div className="produk-tabs">
-            {products.map((p, i) => (
-              <button key={p.id} className={`produk-tab ${activeProd === i ? "active" : ""}`} onClick={() => setActiveProd(i)}>
-                {p.icon} {p.name}
-              </button>
-            ))}
-          </div>
-
-          {products.map((p, i) => i === activeProd && (
-            <div key={p.id} className="produk-detail">
-              <div className="produk-visual" style={{ background: p.lightColor }}>
-                <div style={{ fontSize: 90 }}>{p.icon}</div>
-                <div style={{ position: "absolute", top: 16, left: 16, background: "white", borderRadius: 100, padding: "4px 12px", fontSize: 11, fontWeight: 700, color: p.color }}>
-                  {p.name}
-                </div>
-              </div>
-              <div className="produk-info">
-                <span className="produk-tag" style={{ background: p.lightColor, color: p.color }}>{p.tagline}</span>
-                <h3 className="produk-name">{p.name}</h3>
-                <p className="produk-desc">{p.desc}</p>
-                <ul className="produk-features">
-                  {p.features.map((f) => (
-                    <li key={f} className="produk-feature">
-                      <span className="feature-check">✓</span>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <button className="produk-cta" onClick={() => router.push(p.route)}>
-                  Coba {p.name} →
-                </button>
-              </div>
-            </div>
-          ))}
-        </section>
+        </section>                
 
         {/* ═══ TENTANG KAMI ═══ */}
         <section id="tentang">
